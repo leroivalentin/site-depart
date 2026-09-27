@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Valentin Leroi — Merci et à bientôt</title>
+  <meta name="description" content="Fin d'alternance chez Groupama Gan Vie et Welii : remerciements, synthèse de thèse sur l'IA et la QVCT, méthodologie IA et bons plans.">
+  <meta property="og:title" content="Valentin Leroi — Merci et à bientôt">
+  <meta property="og:description" content="Remerciements, synthèse de thèse IA et QVCT, méthodologie IA et bons plans.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Quicksand', 'system-ui', 'sans-serif'],
+            mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace']
+          },
+          colors: {
+            pink:     { DEFAULT: '#FC248C', soft: '#FFE8F3', ink: '#D1006B' }, // ink : texte et boutons (contraste AA)
+            orange:   { DEFAULT: '#F37021', soft: '#FEF1E9', ink: '#B84A0E' }, // ink : texte sur fond clair (contraste AA)
+            yellow:   '#F3C600',                               // départ de l'arc
+            ink:      '#3D3D3D',                               // gris anthracite du texte
+            base:     '#FAFAFA',                               // fond de page
+            surface:  '#FFFFFF',                               // conteneurs
+            muted:    '#6B6B6B',
+            line:     '#ECECEC',
+            night:    '#1F1F1F',                               // fond du hero
+            placeholder: '#E5E5E5',                            // zones réservées
+            'code-text': '#F5F5F5'
+          },
+          borderRadius: { card: '28px' },
+          boxShadow: {
+            card: '0 2px 6px rgba(0,0,0,.04), 0 12px 32px rgba(0,0,0,.06)',
+            nav:  '0 4px 24px rgba(0,0,0,.10)'
+          }
+        }
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer base {
+      body { @apply bg-base text-ink font-sans antialiased; }
+    }
+    @layer components {
+      /* Barre de navigation flottante en pilule */
+      .topbar { @apply fixed left-1/2 z-50 flex w-[calc(100%-2.5rem)] max-w-6xl -translate-x-1/2 items-center gap-8 rounded-full bg-surface px-8 py-3.5 shadow-nav max-lg:flex-wrap max-lg:gap-3 max-lg:rounded-card max-lg:px-5 max-lg:py-3; top: calc(env(safe-area-inset-top, 0px) + 1rem); }
+      .brand { @apply shrink-0 rounded-lg text-3xl font-bold leading-none tracking-tight text-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-orange max-lg:text-2xl; }
+      .nav-links { @apply flex flex-1 justify-center gap-7 max-lg:order-3 max-lg:basis-full max-lg:justify-start max-lg:gap-5 max-lg:overflow-x-auto max-lg:pb-1; }
+      .nav-link { @apply relative whitespace-nowrap rounded-lg py-1 text-[15px] font-medium text-black hover:text-orange-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-orange; }
+      .nav-link[aria-current="page"] { @apply font-semibold text-orange-ink; }
+
+      /* Boutons */
+      .btn-pink { @apply inline-flex shrink-0 items-center gap-2.5 rounded-full bg-pink-ink px-8 py-3.5 text-sm font-bold text-white hover:brightness-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2 max-lg:ml-auto max-lg:px-5 max-lg:py-2.5; }
+      .btn-pink[aria-current="page"] { @apply ring-2 ring-pink-ink ring-offset-2; }
+      .btn-filter { @apply rounded-full bg-line px-5 py-2 text-sm font-semibold text-ink hover:bg-placeholder focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-ink; }
+      .btn-filter[aria-pressed="true"] { @apply bg-pink-ink text-white hover:bg-pink-ink; }
+      /* Cartes d'offre, format carte bancaire */
+      .offre { @apply relative flex min-h-[17rem] flex-col overflow-hidden rounded-card bg-surface p-6 shadow-card transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg; }
+      .offre::after { content: ""; @apply pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-orange-soft opacity-70; }
+      .offre > * { @apply relative z-10; }
+      .offre-featured { @apply bg-[linear-gradient(135deg,#3D3D3D_0%,#2A2A2A_45%,#F37021_120%)] text-white ring-4 ring-pink ring-offset-4 ring-offset-base; }
+      .offre-featured::after { @apply -right-10 -top-24 h-72 w-72 bg-pink opacity-25; }
+      .offre-tag { @apply rounded-full bg-orange-soft px-3 py-1 text-xs font-bold text-orange-ink; }
+      .offre-chip { @apply block h-7 w-10 rounded-md bg-[linear-gradient(135deg,#F3C600,#F37021)] opacity-90; }
+      .offre.is-leaving { @apply scale-95 opacity-0; }
+      .link { @apply rounded-sm font-semibold text-pink-ink underline decoration-pink/40 decoration-2 underline-offset-4 hover:decoration-pink focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-ink; }
+
+      /* Pages et conteneurs */
+      .page { @apply mx-auto max-w-6xl px-10 pb-20 pt-36 max-lg:pt-40 max-md:px-5; }
+      .page-title { @apply text-4xl font-semibold leading-tight tracking-tight max-md:text-3xl; }
+      .card { @apply rounded-card bg-surface shadow-card; }
+      .code { @apply mt-3 overflow-x-auto rounded-2xl bg-black p-5 font-mono text-[13px] leading-6 text-code-text; }
+
+      /* Accessibilité */
+      .skip-link { @apply sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-ink focus:px-5 focus:py-3 focus:text-sm focus:font-bold focus:text-white; }
+      [data-page-title]:focus { outline: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  </style>
+</head>
+<body>
+  <a href="#contenu" class="skip-link">Aller au contenu</a>
+
+  <!-- ===================== NAVIGATION ===================== -->
+  <header class="topbar">
+    <a href="#remerciements" data-route="remerciements" class="brand" aria-label="Accueil">Valentin</a>
+    <nav class="nav-links" aria-label="Navigation principale">
+      <a href="#remerciements" data-route="remerciements" class="nav-link">Remerciements</a>
+      <a href="#these" data-route="these" class="nav-link">Thèse</a>
+      <a href="#methodologie" data-route="methodologie" class="nav-link">Méthodologie</a>
+      <a href="#bons-plans" data-route="bons-plans" class="nav-link">Bons Plans</a>
+    </nav>
+    <a href="#contact" data-route="contact" class="btn-pink">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l5 5-5 5M9 3l5 5-5 5"/></svg>
+      Contact
+    </a>
+  </header>
+
+  <main id="contenu">
+
+    <!-- ===================== 1. REMERCIEMENTS ===================== -->
+    <section id="remerciements" data-page>
+      <div class="relative overflow-hidden bg-night text-white">
+        <!-- Image de substitution : remplacer ce dégradé par une photo via bg-[url('...')] bg-cover -->
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_85%_30%,rgba(243,112,33,.55),transparent_55%),radial-gradient(ellipse_at_10%_90%,rgba(252,36,140,.25),transparent_50%)]" aria-hidden="true"></div>
+        <svg class="absolute -right-48 -top-32 h-[52rem] w-[52rem] max-md:hidden" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+          <defs><linearGradient id="arc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3C600"/><stop offset="1" stop-color="#F37021"/></linearGradient></defs>
+          <circle cx="50" cy="50" r="49.6" stroke="url(#arc)" stroke-width=".3"/>
+        </svg>
+
+        <div class="relative mx-auto max-w-6xl px-10 pb-44 pt-44 max-md:px-5 max-md:pb-28 max-md:pt-48">
+          <p class="text-sm font-semibold uppercase tracking-wider text-orange">Fin d'alternance · Groupama Gan Vie · Welii</p>
+          <h1 class="mt-4 max-w-2xl text-5xl font-semibold leading-tight max-md:text-4xl" tabindex="-1" data-page-title>Je n'allais quand même pas partir sans dire au revoir à ma manière !</h1>
+          <div class="mt-8 max-w-2xl space-y-5 text-lg leading-8 text-white/90">
+            <p>Mon contrat d'alternance touche à sa fin aujourd'hui... Je tiens à tous vous remercier pour cette année.</p>
+            <p>Un grand merci à Carole qui, avec ses nouveaux talents de rappeuse révélés dans les dernières heures, ajoute cette corde à ses compétences de tutrice exceptionnelle ! Un grand merci et surtout bravo à toute l'équipe communication pour tout le travail réalisé.</p>
+            <p>Pour mes enfants du BDA, je vous laisse un projet que vous devez chérir comme j'ai chéri d'en être le président. Soyez toutes et tous force de proposition pour garder cette dynamique positive. Comme dit le sage : <q class="font-bold text-orange">on fait du travail sérieux, sans se prendre au sérieux</q> !</p>
+            <p>Je vous souhaite une très bonne continuation !</p>
+            <p>Ce n'est qu'un au revoir... on se retrouve bientôt pour parler d'IA ou pour rigoler autour d'un verre.</p>
+            <p class="pt-2 text-xl font-bold text-white">Valentin</p>
+          </div>
+        </div>
+
+        <!-- Courbe inférieure -->
+        <svg class="absolute bottom-0 left-0 h-24 w-full max-md:h-12" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0,40 C360,130 1080,130 1440,20 L1440,120 L0,120 Z" fill="#FAFAFA"/>
+        </svg>
+      </div>
+
+      <div class="mx-auto max-w-6xl px-10 pb-20 pt-6 max-md:px-5">
+        <p class="max-w-2xl rounded-2xl bg-pink-soft px-6 py-4 text-sm leading-6"><span class="font-bold text-pink-ink">PS :</span> Anaïs, ne fouille pas trop dans le code source s'il te plaît, je n'ai pas respecté toutes les réglementations.</p>
+      </div>
+    </section>
+
+    <!-- ===================== 2. THÈSE ===================== -->
+    <section id="these" data-page class="page hidden">
+      <p class="text-sm font-semibold text-orange-ink">Thèse MBA EFAP — Septembre 2026</p>
+      <h1 tabindex="-1" data-page-title class="page-title mt-3 max-w-3xl">L'intégration de l'IA dans les pratiques RH et la QVCT</h1>
+
+      <!-- Annotation -->
+      <p class="mt-6 inline-flex max-w-2xl items-start gap-3 rounded-2xl bg-orange-soft px-5 py-3 text-sm leading-6">
+        <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-orange text-[11px] font-bold text-white" aria-hidden="true">i</span>
+        <span>Ce texte est un résumé de ma thèse professionnelle, adapté au secteur de l'assurance. La thèse complète compte plus de 178 pages.</span>
+      </p>
+
+      <!-- Problématique -->
+      <div class="mt-10 grid grid-cols-[12rem_1fr] gap-8 max-md:grid-cols-1 max-md:gap-3">
+        <h2 class="text-lg font-bold">Problématique</h2>
+        <p class="max-w-2xl text-xl font-semibold leading-8">Comment l'IA peut-elle améliorer la QVCT et la santé mentale en entreprise en (re)définissant le rôle de l'entreprise providence ?</p>
+      </div>
+
+      <!-- Synthèse -->
+      <article class="mt-14 max-w-3xl">
+        <h2 class="text-3xl font-semibold leading-tight tracking-tight max-md:text-2xl">Mesurer sans pouvoir agir : l'anomalie de la QVCT algorithmique</h2>
+        <p class="mt-6 leading-8">L'intelligence artificielle a été introduite en santé mentale au travail précisément là où l'entreprise providence se heurte à sa propre contradiction. L'employeur doit démontrer qu'il veille à la santé psychique de ses salariés, mais il n'a pas le droit de traiter les données qui le prouveraient. Le consentement du salarié est vicié par le lien de subordination lui-même. Toute inférence sur l'état psychique transforme en donnée de santé ce qui, à l'entrée, n'était qu'une donnée banale. Enfin, plus un indicateur descend au niveau où le manager peut agir, plus il perd l'anonymat qui le rendait licite. La limite est aussi épistémique : la parole du salarié est produite sous une contrainte que les modèles n'ont pas apprise, si bien que le score est faux avant même d'être illicite. La providence numérisée ne peut ni connaître ce qu'elle prétend protéger, ni agir sur ce qu'elle parviendrait à connaître. <strong class="font-bold">L'IA n'est donc pas une réponse, c'est un révélateur</strong> : elle n'ajoute aucune capacité d'action, elle montre celle qui existe déjà.</p>
+      </article>
+
+      <h2 class="mt-14 text-2xl font-semibold">Impact pour le modèle de l'assurance santé</h2>
+      <div class="mt-6 grid grid-cols-3 gap-6 max-lg:grid-cols-1">
+        <article class="card p-7">
+          <span class="flex h-10 w-10 items-center justify-center rounded-full bg-orange-soft font-bold text-orange-ink">1</span>
+          <h3 class="mt-5 text-lg font-bold leading-snug">L'assureur finance désormais un instrument de mesure, pas seulement un risque</h3>
+          <p class="mt-3 text-sm leading-6 text-muted">Rembourser une monture optique n'apprend rien à l'employeur sur l'état de son salarié. Financer un accompagnement psychique, en revanche, place celui qui dirige, évalue et peut licencier tout près d'une information extrêmement sensible. Pour un assureur de personnes comme Groupama Gan Vie, la question n'est plus seulement celle du financement. Elle porte sur la détention de l'instrument de mesure et sur la responsabilité de celui qui le fournit.</p>
+        </article>
+        <article class="card p-7 ring-2 ring-pink">
+          <span class="flex h-10 w-10 items-center justify-center rounded-full bg-pink-soft font-bold text-pink-ink">2</span>
+          <h3 class="mt-5 text-lg font-bold leading-snug">Vendre de la détection sans diagnostic préalable est une anomalie de marché</h3>
+          <p class="mt-3 text-sm leading-6 text-muted">Un même outil, vendu selon la même grille, produit de la prévention là où existent un dialogue social outillé, un sponsor ayant autorité sur l'organisation du travail et une chaîne de réponse instituée. Ailleurs, il ne produit que de la traçabilité. La capacité de réponse managériale n'apparaît pas dans le contrat : ni observable à la souscription, ni stable, ni facturable. Une organisation qui mesure sans pouvoir agir obtient une preuve détaillée de sa propre inaction, qu'elle retourne contre le salarié désigné par l'indicateur, Depuis la jurisprudence de 2015, l'employeur peut s'exonérer en prouvant ses mesures de prévention : c'est pourquoi cette trace se vend comme preuve de vigilance. Pour Welii, aucune capacité de détection ne devrait être déployée sans une capacité de réponse au moins équivalente, vérifiée avant la vente.</p>
+        </article>
+        <article class="card p-7">
+          <span class="flex h-10 w-10 items-center justify-center rounded-full bg-orange-soft font-bold text-orange-ink">3</span>
+          <h3 class="mt-5 text-lg font-bold leading-snug">L'offre protège à contre-courant du risque</h3>
+          <p class="mt-3 text-sm leading-6 text-muted">La protection psychique est attribuée selon le bénéfice attendu, pas selon l'exposition. Le seul approfondissement médical individualisé des catalogues étudiés est réservé aux fonctions les moins remplaçables. L'intensité de la couverture diminue à mesure que l'effectif augmente, et les structures trop petites pour accéder au marché, où le déficit de prévention est le plus fort, n'ont aucune offre. Ajouter une couche algorithmique accentue cette pente. Personne n'a décidé cette asymétrie : c'est le format même du catalogue d'un assureur collectif et de sa plateforme de services qui la produit.</p>
+        </article>
+      </div>
+
+      <!-- Conclusion -->
+      <aside class="mt-14 rounded-card bg-surface p-10 shadow-card max-md:p-6">
+        <h2 class="text-2xl font-semibold">Une nouvelle définition de l'entreprise providence</h2>
+        <p class="mt-5 max-w-3xl leading-8">Le transfert de l'État vers l'entreprise n'a pas déplacé une charge financière. Il a déplacé un pouvoir discrétionnaire de qualification. L'État providence distribuait des droits opposables, identiques pour tous et indépendants de l'employeur. L'entreprise providence distribue des ressources révocables, calculées selon une doctrine de direction que rien n'oblige à formuler et que rien n'empêche de retirer. La santé mentale au travail cesse d'être une politique publique pour devenir un attribut de l'organisation qui vous emploie. Deux salariés qui exercent le même métier, sous les mêmes contraintes et le même droit, n'ont pas le même accès à une protection effective. Assureurs et plateformes de services se trouvent exactement au point où cette protection est distribuée. Leur rôle n'est pas de vendre davantage de mesure, mais de conditionner l'outil à la capacité de répondre et de refermer l'écart entre l'accès à la protection et l'exposition au risque.</p>
+        <p class="mt-6 max-w-3xl text-xl font-semibold leading-8 text-orange-ink">Le salarié ne demandera plus quels droits il détient, mais où il travaille.</p>
+      </aside>
+    </section>
+
+    <!-- ===================== 3. MÉTHODOLOGIE ===================== -->
+    <section id="methodologie" data-page class="page hidden">
+      <div class="mx-auto max-w-3xl">
+
+        <!-- En-tête -->
+        <p class="text-sm font-semibold text-orange-ink">Ingénierie de requête</p>
+        <h1 tabindex="-1" data-page-title class="page-title mt-3">Méthodologie IA</h1>
+        <p class="mt-5 text-lg leading-8">Un modèle de langage complète chaque information absente par l'hypothèse la plus probable. La qualité du résultat dépend donc moins de la formulation que de la quantité d'incertitude laissée dans la requête. Trois règles réduisent cette incertitude. La deuxième remplace une pratique répandue mais inefficace : l'ajout de superlatifs.</p>
+
+        <!-- Emplacement vidéo -->
+        <div class="mt-10 flex aspect-video w-full items-center justify-center overflow-hidden rounded-card bg-placeholder" role="img" aria-label="Emplacement réservé au tutoriel vidéo">
+          <!-- Remplacer ce bloc par : <video class="h-full w-full" controls src="..."></video> -->
+          <span class="flex h-20 w-20 items-center justify-center rounded-full bg-pink shadow-card">
+            <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="#FFFFFF"/></svg>
+          </span>
+        </div>
+
+        <!-- ========== Règle 1 : inversion ========== -->
+        <article class="mt-16">
+          <p class="text-sm font-bold text-orange-ink">Règle 1</p>
+          <h2 class="mt-1 text-2xl font-semibold">Inversion : faire questionner avant d'exécuter</h2>
+          <p class="mt-4 leading-8">La requête standard place l'utilisateur en position de prescripteur et le modèle en position d'exécutant. Le modèle ne signale pas ce qui lui manque : il le suppose, puis produit un résultat cohérent avec ses suppositions. L'inversion oblige le modèle à expliciter ses inconnues avant de produire.</p>
+
+          <p class="mt-6 text-sm font-bold">Requête sous-optimale</p>
+          <pre class="code"><code>Rédige une note de synthèse sur la prévention des RPS
+pour notre direction commerciale.</code></pre>
+          <p class="mt-3 text-sm leading-6 text-muted">Inconnues non résolues : longueur, niveau de détail, données disponibles, objectif de la note, ton, décision attendue du lecteur. Le modèle les tranche seul.</p>
+
+          <p class="mt-6 text-sm font-bold">Requête avec directive d'inversion</p>
+          <pre class="code"><code>Tâche : rédiger une note de synthèse sur la prévention
+des RPS pour notre direction commerciale.
+
+Avant d'exécuter, pose-moi entre 5 et 10 questions de
+cadrage. Priorise les informations qui modifieraient
+le plus le résultat. N'écris rien de la note avant
+d'avoir reçu mes réponses.</code></pre>
+
+          <div class="mt-6 grid grid-cols-2 gap-4 max-md:grid-cols-1">
+            <div class="card p-5">
+              <p class="text-sm font-bold">Quand l'appliquer</p>
+              <p class="mt-2 text-sm leading-6 text-muted">Toute tâche comportant plusieurs inconnues : livrable destiné à un tiers, contexte métier propre à l'entreprise, critères de réussite non formulés.</p>
+            </div>
+            <div class="card p-5">
+              <p class="text-sm font-bold">Quand s'en passer</p>
+              <p class="mt-2 text-sm leading-6 text-muted">Requête déjà complète ou tâche fermée (reformuler un paragraphe, traduire, corriger). Les questions ajoutent un aller-retour sans gain.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- ========== Pratique écartée : amplification ========== -->
+        <article class="mt-16">
+          <p class="text-sm font-bold text-orange-ink">Règle 2</p>
+          <h2 class="mt-1 text-2xl font-semibold">Positionner par le contenu, pas par l'éloge</h2>
+          <p class="mt-4 leading-8">Une pratique répandue consiste à injecter des superlatifs pour « élever » le niveau du modèle. L'hypothèse sous-jacente : l'éloge activerait une zone de compétence supérieure. Les évaluations systématiques des rôles attribués dans les prompts ne montrent pas de gain constant sur l'exactitude. Un modèle récent n'a pas de mode caché déverrouillé par la flatterie : il répond à des informations, pas à des qualificatifs.</p>
+
+          <p class="mt-6 text-sm font-bold">Requête amplifiée <span class="font-semibold text-pink-ink">(à éviter)</span></p>
+          <pre class="code"><code>Tu es omniscient, un expert god-tier en QVCT.
+Voici le prompt parfait : fais la meilleure analyse
+possible de notre baromètre social.</code></pre>
+          <p class="mt-3 text-sm leading-6 text-muted">Trois superlatifs, zéro information exploitable. « Omniscient » peut en outre dissuader le modèle d'exprimer ses incertitudes, ce qui dégrade la fiabilité au lieu de l'améliorer.</p>
+
+          <p class="mt-6 text-sm font-bold">Requête à positionnement précis</p>
+          <pre class="code"><code>Rôle : analyste RH spécialisé en risques psychosociaux,
+habitué aux baromètres sociaux de groupes d'assurance.
+
+Tâche : analyser le baromètre joint.
+Critères : distinguer les écarts significatifs des
+variations de bruit ; signaler toute conclusion que
+l'échantillon ne permet pas d'établir.
+Format : 5 constats maximum, chacun relié à une
+question précise du baromètre.</code></pre>
+
+          <div class="mt-6 rounded-2xl bg-orange-soft px-6 py-5">
+            <p class="text-sm font-bold">À retenir</p>
+            <p class="mt-2 text-sm leading-6">Un rôle utile est un rôle qui apporte de l'information : domaine, public, contraintes du métier, critères de qualité. Remplacer chaque superlatif par un critère vérifiable.</p>
+          </div>
+        </article>
+
+        <!-- ========== Règle 3 : protocole d'itération ========== -->
+        <article class="mt-16">
+          <p class="text-sm font-bold text-orange-ink">Règle 3</p>
+          <h2 class="mt-1 text-2xl font-semibold">Protocole d'itération : tester chaque version dans une session vierge</h2>
+          <p class="mt-4 leading-8">Dans une même conversation, le modèle lit tout l'historique à chaque réponse : premières versions, corrections, résultats rejetés. Il s'ancre sur ses réponses antérieures et hérite de consignes contradictoires. La version finale d'une requête semble alors fonctionner, mais elle ne fonctionne qu'avec cet historique. Copiée dans une nouvelle session ou transmise à un collègue, elle produit un autre résultat.</p>
+
+          <!-- Schéma -->
+          <figure class="card mt-8 overflow-x-auto p-6">
+            <svg viewBox="0 0 720 420" class="w-full min-w-[560px]" role="img" aria-labelledby="schema-titre schema-desc" font-family="Quicksand, system-ui, sans-serif">
+              <title id="schema-titre">Comparaison de deux méthodes d'itération</title>
+              <desc id="schema-desc">En haut, une session unique où l'historique s'accumule à chaque version. En bas, chaque version testée dans une session vierge, les corrections étant reportées dans la requête elle-même.</desc>
+              <defs>
+                <marker id="fleche" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="#3D3D3D"/>
+                </marker>
+              </defs>
+
+              <!-- Ligne 1 : session polluée -->
+              <text x="0" y="22" font-size="15" font-weight="700" fill="#FC248C">À proscrire : une seule session</text>
+              <rect x="0" y="40" width="720" height="140" rx="20" fill="#FFE8F3"/>
+              <g font-size="13" font-weight="600" fill="#3D3D3D">
+                <rect x="24" y="64" width="120" height="44" rx="12" fill="#FFFFFF"/>
+                <text x="84" y="91" text-anchor="middle">Requête v1</text>
+                <rect x="204" y="64" width="120" height="44" rx="12" fill="#FFFFFF"/>
+                <text x="264" y="91" text-anchor="middle">« Corrige X »</text>
+                <rect x="384" y="64" width="120" height="44" rx="12" fill="#FFFFFF"/>
+                <text x="444" y="91" text-anchor="middle">« Plutôt Y »</text>
+                <rect x="564" y="64" width="132" height="44" rx="12" fill="#FFFFFF"/>
+                <text x="630" y="91" text-anchor="middle">Résultat final</text>
+              </g>
+              <g stroke="#3D3D3D" stroke-width="1.5" marker-end="url(#fleche)">
+                <line x1="146" y1="86" x2="200" y2="86"/>
+                <line x1="326" y1="86" x2="380" y2="86"/>
+                <line x1="506" y1="86" x2="560" y2="86"/>
+              </g>
+              <!-- Accumulation du contexte -->
+              <g fill="#FC248C">
+                <rect x="24"  y="140" width="40"  height="14" rx="7"/>
+                <rect x="204" y="140" width="80"  height="14" rx="7"/>
+                <rect x="384" y="140" width="120" height="14" rx="7"/>
+                <rect x="564" y="140" width="132" height="14" rx="7"/>
+              </g>
+              <text x="24" y="132" font-size="11" fill="#6B6B6B">Historique lu par le modèle</text>
+
+              <!-- Ligne 2 : protocole -->
+              <text x="0" y="222" font-size="15" font-weight="700" fill="#F37021">Protocole : une session vierge par version</text>
+              <g font-size="13" font-weight="600" fill="#3D3D3D">
+                <rect x="0"   y="240" width="200" height="140" rx="20" fill="#FEF1E9"/>
+                <text x="100" y="264" text-anchor="middle" font-size="11" fill="#6B6B6B">Session A</text>
+                <rect x="24"  y="276" width="152" height="40" rx="12" fill="#FFFFFF"/>
+                <text x="100" y="301" text-anchor="middle">Test requête v1</text>
+                <rect x="24"  y="340" width="16"  height="14" rx="7" fill="#F37021"/>
+
+                <rect x="260" y="240" width="200" height="140" rx="20" fill="#FEF1E9"/>
+                <text x="360" y="264" text-anchor="middle" font-size="11" fill="#6B6B6B">Session B</text>
+                <rect x="284" y="276" width="152" height="40" rx="12" fill="#FFFFFF"/>
+                <text x="360" y="301" text-anchor="middle">Test requête v2</text>
+                <rect x="284" y="340" width="16"  height="14" rx="7" fill="#F37021"/>
+
+                <rect x="520" y="240" width="200" height="140" rx="20" fill="#FEF1E9"/>
+                <text x="620" y="264" text-anchor="middle" font-size="11" fill="#6B6B6B">Session C</text>
+                <rect x="544" y="276" width="152" height="40" rx="12" fill="#FFFFFF"/>
+                <text x="620" y="301" text-anchor="middle">Test requête v3</text>
+                <rect x="544" y="340" width="16"  height="14" rx="7" fill="#F37021"/>
+              </g>
+              <!-- Réécriture hors session -->
+              <g stroke="#3D3D3D" stroke-width="1.5" fill="none" stroke-dasharray="5 4" marker-end="url(#fleche)">
+                <path d="M176,296 C218,296 218,296 280,296"/>
+                <path d="M436,296 C478,296 478,296 540,296"/>
+              </g>
+              <g font-size="11" fill="#3D3D3D" text-anchor="middle">
+                <text x="230" y="404">Correction intégrée</text>
+                <text x="230" y="418">à la requête</text>
+                <text x="490" y="404">Correction intégrée</text>
+                <text x="490" y="418">à la requête</text>
+              </g>
+              <text x="48" y="352" font-size="11" fill="#6B6B6B">Requête seule</text>
+              <text x="308" y="352" font-size="11" fill="#6B6B6B">Requête seule</text>
+              <text x="568" y="352" font-size="11" fill="#6B6B6B">Requête seule</text>
+            </svg>
+            <figcaption class="mt-4 text-sm leading-6 text-muted">La correction n'est pas envoyée au modèle sous forme de message : elle est intégrée à la requête, puis la nouvelle version est testée sans historique. Le résultat mesure alors la requête, et elle seule.</figcaption>
+          </figure>
+
+          <p class="mt-8 text-sm font-bold">Correction en session (à proscrire pour tester une requête)</p>
+          <pre class="code"><code>[Message 1] Rédige un post LinkedIn sur la QVCT.
+[Message 2] Trop long.
+[Message 3] Plus de chiffres.
+[Message 4] Garde la version 2 mais avec le ton de la 3.</code></pre>
+
+          <p class="mt-6 text-sm font-bold">Correction intégrée, testée en session vierge</p>
+          <pre class="code"><code>Version 2 — nouvelle session
+
+Rédige un post LinkedIn sur la QVCT.
+Longueur : 1 200 caractères maximum.
+Données : utilise uniquement les deux chiffres
+ci-dessous, avec leur source.
+Ton : professionnel, factuel, sans emoji.
+[chiffres et sources]</code></pre>
+
+          <div class="mt-6 grid grid-cols-3 gap-4 max-md:grid-cols-1">
+            <div class="card p-5">
+              <p class="text-2xl font-bold text-orange-ink">1</p>
+              <p class="mt-2 text-sm leading-6">Tester la requête dans une session vierge.</p>
+            </div>
+            <div class="card p-5">
+              <p class="text-2xl font-bold text-orange-ink">2</p>
+              <p class="mt-2 text-sm leading-6">Identifier l'écart entre le résultat et l'attendu.</p>
+            </div>
+            <div class="card p-5">
+              <p class="text-2xl font-bold text-orange-ink">3</p>
+              <p class="mt-2 text-sm leading-6">Réécrire la requête pour combler l'écart, puis reprendre à l'étape 1.</p>
+            </div>
+          </div>
+
+          <p class="mt-6 rounded-2xl bg-surface px-6 py-5 text-sm leading-6 shadow-card"><span class="font-bold">Périmètre.</span> Le protocole s'applique à la mise au point d'une requête réutilisable : modèle de document, consigne partagée à une équipe, prompt système. Pour retoucher un livrable ponctuel, poursuivre dans la même session reste efficace : l'historique y est une ressource, pas une pollution.</p>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ===================== 4. BONS PLANS ===================== -->
+    <section id="bons-plans" data-page class="page hidden">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <div>
+          <p class="text-sm font-semibold text-orange-ink">Étudiants et moins de 26 ans — septembre 2026</p>
+          <h1 tabindex="-1" data-page-title class="page-title mt-3">Bons Plans</h1>
+          <p class="mt-4 max-w-2xl leading-7 text-muted">Pour les alternants, stagiaires et moins de 26 ans de l'équipe. Offres vérifiées le 27 septembre 2026 pour la France ; contrôler la page officielle avant de souscrire.</p>
+        </div>
+        <p id="offres-compteur" class="rounded-full bg-surface px-4 py-2 text-sm font-semibold shadow-card tabular-nums" aria-live="polite"></p>
+      </div>
+
+      <!-- Filtres -->
+      <div class="mt-8 flex gap-2 overflow-x-auto pb-2" role="group" aria-label="Filtrer les offres par catégorie">
+        <button type="button" class="btn-filter shrink-0" data-filter="tous" aria-pressed="true">Tous</button>
+        <button type="button" class="btn-filter shrink-0" data-filter="reseautage" aria-pressed="false">Réseautage</button>
+        <button type="button" class="btn-filter shrink-0" data-filter="ia-tech" aria-pressed="false">IA &amp; Tech</button>
+        <button type="button" class="btn-filter shrink-0" data-filter="productivite" aria-pressed="false">Productivité</button>
+        <button type="button" class="btn-filter shrink-0" data-filter="video-audio" aria-pressed="false">Vidéo &amp; Audio</button>
+        <button type="button" class="btn-filter shrink-0" data-filter="presse" aria-pressed="false">Presse</button>
+        <button type="button" class="btn-filter shrink-0" data-filter="ecommerce" aria-pressed="false">E-commerce</button>
+      </div>
+
+      <!-- Grille -->
+      <div id="offres" class="mt-6 grid grid-cols-3 gap-6 max-lg:grid-cols-2 max-md:grid-cols-1">
+
+        <!-- Carte exclusive : toujours en première position -->
+        <article class="offre offre-featured col-span-2 max-md:col-span-1" data-category="reseautage">
+          <div class="flex items-start justify-between gap-4">
+            <span class="offre-tag bg-white/15 text-white">Réseautage</span>
+            <span class="rounded-full bg-pink-ink px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">Exclusif</span>
+          </div>
+          <div class="mt-6 flex items-center gap-3">
+            <span class="offre-chip" aria-hidden="true"></span>
+            <h2 class="text-2xl font-bold">LinkedIn Premium Career</h2>
+          </div>
+          <p class="mt-4 text-4xl font-bold max-md:text-3xl">2 mois gratuits</p>
+          <p class="mt-4 max-w-xl text-sm leading-6 text-white/85">Essai exclusif accessible uniquement via mon lien de parrainage. Le lien n'est pas public : contactez-moi directement sur LinkedIn pour le recevoir.</p>
+          <a href="#contact" data-route="contact" class="mt-auto inline-flex w-fit items-center gap-2.5 rounded-full bg-white px-6 py-3 text-sm font-bold text-ink hover:bg-pink hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
+            Me contacter sur LinkedIn
+          </a>
+        </article>
+
+        <article class="offre" data-category="video-audio">
+          <div class="flex items-start justify-between gap-4">
+            <span class="offre-tag">Vidéo &amp; Audio</span>
+            <span class="offre-chip" aria-hidden="true"></span>
+          </div>
+          <h2 class="mt-5 text-lg font-bold leading-snug">Canal+ RAT+ (18-25 ans)</h2>
+          <p class="mt-2 text-2xl font-bold">dès 13,99 €/mois</p>
+          <p class="text-sm font-semibold text-pink-ink">Ciné Séries ou Sport 19,99 € · La Totale 29,99 €</p>
+          <p class="mt-3 text-sm leading-6 text-muted">RAT+ : six chaînes en direct et Canal+ à la demande. Ciné Séries ajoute Netflix, Apple TV, HBO, Paramount+ et Ciné+ OCS. Sans engagement, jusqu'à la veille des 26 ans.</p>
+          <div class="mt-auto flex flex-wrap gap-x-5 gap-y-1 pt-5">
+            <a href="https://boutique.canalplus.com/offres/moins-26-ans" target="_blank" rel="noopener" class="link text-sm">canalplus.com</a>
+          </div>
+        </article>
+
+        <article class="offre" data-category="video-audio">
+          <div class="flex items-start justify-between gap-4">
+            <span class="offre-tag">Vidéo &amp; Audio</span>
+            <span class="offre-chip" aria-hidden="true"></span>
+          </div>
+          <h2 class="mt-5 text-lg font-bold leading-snug">Amazon Prime Student</h2>
+          <p class="mt-2 text-2xl font-bold">90 jours gratuits</p>
+          <p class="text-sm font-semibold text-pink-ink">puis 3,49 €/mois ou 34,95 €/an</p>
+          <p class="mt-3 text-sm leading-6 text-muted">Étudiants du supérieur en France ou 18-24 ans. Tous les avantages Prime à moitié prix, pendant 4 ans maximum ou jusqu'à 25 ans.</p>
+          <div class="mt-auto flex flex-wrap gap-x-5 gap-y-1 pt-5">
+            <a href="https://www.amazon.fr/joinstudent" target="_blank" rel="noopener" class="link text-sm">amazon.fr/joinstudent</a>
+          </div>
+        </article>
+
+        <article class="offre" data-category="video-audio">
+          <div class="flex items-start justify-between gap-4">
+            <span class="offre-tag">Vidéo &amp; Audio</span>
+            <span class="offre-chip" aria-hidden="true"></span>
+          </div>
+          <h2 class="mt-5 text-lg font-bold leading-snug">YouTube Premium &amp; Apple Music</h2>
+          <p class="mt-2 text-2xl font-bold">7,99 € / 6,99 €</p>
+          <p class="text-sm font-semibold text-pink-ink">par mois, tarifs étudiants</p>
+          <p class="mt-3 text-sm leading-6 text-muted">YouTube Premium Étudiant (YouTube Music inclus) à 7,99 € au lieu de 12,99 €. Apple Music Étudiant à 6,99 € au lieu de 11,99 €, avec Apple TV inclus sans surcoût.</p>
+          <div class="mt-auto flex flex-wrap gap-x-5 gap-y-1 pt-5">
+            <a href="https://www.youtube.com/premium/student" target="_blank" rel="noopener" class="link text-sm">youtube.com</a>
+            <a href="https://music.apple.com/fr/student" target="_blank" rel="noopener" class="link text-sm">music.apple.com</a>
+          </div>
+        </article>
+
+        <article class="offre" data-category="video-audio">
+          <div class="flex items-start justify-between gap-4">
+            <span class="offre-tag">Vidéo &amp; Audio</span>
+            <span class="offre-chip" aria-hidden="true"></span>
+          </div>
+          <h2 class="mt-5 text-lg font-bold leading-snug">Spotify &amp; Deezer</h2>
+          <p class="mt-2 text-2xl font-bold">5,99 € à 7,07 €</p>
+          <p class="text-sm font-semibold text-pink-ink">par mois, tarifs étudiants</p>
+          <p class="mt-3 text-sm leading-6 text-muted">Deezer Student à 5,99 € (18-25 ans, vérification UNiDAYS). Spotify Premium Étudiants à 7,07 € au lieu de 12,14 €, 4 ans maximum. Un mois d'essai chacun.</p>
+          <div class="mt-auto flex flex-wrap gap-x-5 gap-y-1 pt-5">
+            <a href="https://www.spotify.com/fr/student/" target="_blank" rel="noopener" class="link text-sm">spotify.com</a>
+            <a href="https://www.deezer.com/fr/offers/student" target="_blank" rel="noopener" class="link text-sm">deezer.com</a>
+          </div>
+        </article>
+
+        <article class="offre" data-category="presse">
+          <div class="flex items-start justify-between gap-4">
+            <span class="offre-tag">Presse</span>
+            <span class="offre-chip" aria-hidden="true"></span>
+          </div>
+          <h2 class="mt-5 text-lg font-bold leading-snug">Ouest-France, Libération, Le Figaro</h2>
+          <p class="mt-2 text-2xl font-bold">Gratuit à 2 €/mois</p>
+          <p class="text-sm font-semibold text-pink-ink">moins de 26 ans</p>
+          <p class="mt-3 text-sm leading-6 text-muted">Ouest-France : numérique gratuit de 15 à 25 ans. Libération : 2 €/mois ou 20 €/an, justificatif d'identité demandé. Le Figaro : offre jeunes relevée à 1,99 €/mois. Le Monde et Mediapart ont des tarifs réduits dont le montant n'a pas pu être confirmé.</p>
+          <div class="mt-auto flex flex-wrap gap-x-5 gap-y-1 pt-5">
+            <a href="https://aideliberation.crisp.help/fr/article/quel-est-le-tarif-de-la-formule-numerique-de-liberation-qpfe2w/" target="_blank" rel="noopener" class="link text-sm">liberation.fr</a>
+            <a href="https://www.ouest-france.fr" target="_blank" rel="noopener" class="link text-sm">ouest-france.fr</a>
+          </div>
+        </article>
+
+        <article class="offre" data-category="presse">
+          <div class="flex items-start justify-between gap-4">
+            <span class="offre-tag">Presse</span>
+            <span class="offre-chip" aria-hidden="true"></span>
+          </div>
+          <h2 class="mt-5 text-lg font-bold leading-snug">Europresse via l'université ou la BnF</h2>
+          <p class="mt-2 text-2xl font-bold">Gratuit ou 15 €/an</p>
+          <p class="text-sm font-semibold text-pink-ink">selon le point d'accès</p>
+          <p class="mt-3 text-sm leading-6 text-muted">Gratuit avec le compte numérique de la plupart des universités. À la BnF : Pass Lecture/Culture à 15 €/an pour les moins de 26 ans ; accès Europresse à distance suspendu depuis mars 2026, disponible sur place.</p>
+          <div class="mt-auto flex flex-wrap gap-x-5 gap-y-1 pt-5">
+            <a href="https://www.bnf.fr/fr/ressources-electroniques-de-presse" target="_blank" rel="noopener" class="link text-sm">bnf.fr</a>
+          </div>
+        </article>
+
+        <article class="offre" data-category="ia-tech">
+          <div class="flex items-start justify-between gap-4">
+            <span class="offre-tag">IA &amp; Tech</span>
+            <span class="offre-chip" aria-hidden="true"></span>
+          </div>
+          <h2 class="mt-5 text-lg font-bold leading-snug">Perplexity Education Pro</h2>
+          <p class="mt-2 text-2xl font-bold">1 mois gratuit</p>
+          <p class="text-sm font-semibold text-pink-ink">puis 10 $/mois (−50 %)</p>
+          <p class="mt-3 text-sm leading-6 text-muted">Vérification SheerID. Souscrire sur le web : la remise ne s'applique pas à un abonnement App Store.</p>
+          <div class="mt-auto flex flex-wrap gap-x-5 gap-y-1 pt-5">
+            <a href="https://www.perplexity.ai/students" target="_blank" rel="noopener" class="link text-sm">perplexity.ai/students</a>
+          </div>
+        </article>
+
+        <article class="offre" data-category="ia-tech">
+          <div class="flex items-start justify-between gap-4">
+            <span class="offre-tag">IA &amp; Tech</span>
+            <span class="offre-chip" aria-hidden="true"></span>
+          </div>
+          <h2 class="mt-5 text-lg font-bold leading-snug">Google Gemini AI Plus</h2>
+          <p class="mt-2 text-2xl font-bold">12 mois gratuits</p>
+          <p class="text-sm font-semibold text-pink-ink">inscription avant le 31/12/2026</p>
+          <p class="mt-3 text-sm leading-6 text-muted">18 ans minimum, e-mail d'établissement. Moyen de paiement exigé ; renouvellement payant à l'issue, sauf résiliation.</p>
+          <div class="mt-auto flex flex-wrap gap-x-5 gap-y-1 pt-5">
+            <a href="https://gemini.google/students/" target="_blank" rel="noopener" class="link text-sm">gemini.google/students</a>
+          </div>
+        </article>
+
+        <article class="offre" data-category="ia-tech">
+          <div class="flex items-start justify-between gap-4">
+            <span class="offre-tag">IA &amp; Tech</span>
+            <span class="offre-chip" aria-hidden="true"></span>
+          </div>
+          <h2 class="mt-5 text-lg font-bold leading-snug">GitHub Copilot, Zed Pro, JetBrains</h2>
+          <p class="mt-2 text-2xl font-bold">Gratuits</p>
+          <p class="text-sm font-semibold text-pink-ink">sur vérification académique</p>
+          <p class="mt-3 text-sm leading-6 text-muted">Copilot Student gratuit avec crédits IA mensuels. Zed Pro offert un an avec 10 $/mois de crédits IA. JetBrains : IDE gratuits, IA en essai limité.</p>
+          <div class="mt-auto flex flex-wrap gap-x-5 gap-y-1 pt-5">
+            <a href="https://education.github.com/pack" target="_blank" rel="noopener" class="link text-sm">github.com</a>
+            <a href="https://zed.dev/education" target="_blank" rel="noopener" class="link text-sm">zed.dev</a>
+            <a href="https://www.jetbrains.com/academy/student-pack/" target="_blank" rel="noopener" class="link text-sm">jetbrains.com</a>
+          </div>
+        </article>
+
+        <article class="offre" data-category="productivite">
+          <div class="flex items-start justify-between gap-4">
+            <span class="offre-tag">Productivité</span>
+            <span class="offre-chip" aria-hidden="true"></span>
+          </div>
+          <h2 class="mt-5 text-lg font-bold leading-snug">Figma, Notion, Microsoft 365</h2>
+          <p class="mt-2 text-2xl font-bold">Pro / Plus / A1</p>
+          <p class="text-sm font-semibold text-pink-ink">offerts sur vérification</p>
+          <p class="mt-3 text-sm leading-6 text-muted">Figma Professional gratuit avec 3 000 crédits IA/mois. Notion Plus gratuit, sans Notion AI complet. Microsoft 365 A1 via l'établissement, Copilot Chat si activé.</p>
+          <div class="mt-auto flex flex-wrap gap-x-5 gap-y-1 pt-5">
+            <a href="https://www.figma.com/education/" target="_blank" rel="noopener" class="link text-sm">figma.com</a>
+            <a href="https://www.notion.com/help/notion-for-education" target="_blank" rel="noopener" class="link text-sm">notion.com</a>
+            <a href="https://www.microsoft.com/en-us/education/products/copilot-in-education" target="_blank" rel="noopener" class="link text-sm">microsoft.com</a>
+          </div>
+        </article>
+
+        <article class="offre" data-category="ecommerce">
+          <div class="flex items-start justify-between gap-4">
+            <span class="offre-tag">E-commerce</span>
+            <span class="offre-chip" aria-hidden="true"></span>
+          </div>
+          <h2 class="mt-5 text-lg font-bold leading-snug">UNiDAYS &amp; Apple Éducation</h2>
+          <p class="mt-2 text-2xl font-bold">Remises &amp; crédits</p>
+          <p class="text-sm font-semibold text-pink-ink">sur vérification du statut étudiant</p>
+          <p class="mt-3 text-sm leading-6 text-muted">UNiDAYS : remises étudiantes chez de nombreuses enseignes, après vérification du statut. Apple : tarif Éducation sur Mac et iPad.</p>
+          <div class="mt-auto flex flex-wrap gap-x-5 gap-y-1 pt-5">
+            <a href="https://www.myunidays.com/FR/fr-FR" target="_blank" rel="noopener" class="link text-sm">myunidays.com</a>
+            <a href="https://www.apple.com/fr/shop/back-to-school" target="_blank" rel="noopener" class="link text-sm">apple.com</a>
+          </div>
+        </article>
+
+      </div>
+      <p id="offres-vide" class="mt-6 hidden text-sm text-muted">Aucune offre dans cette catégorie.</p>
+    </section>
+
+    <!-- ===================== 5. CONTACT ===================== -->
+    <section id="contact" data-page class="page hidden">
+      <div class="mx-auto flex min-h-[60vh] max-w-md flex-col justify-center text-center">
+        <h1 tabindex="-1" data-page-title class="page-title">Contact</h1>
+        <p class="mt-3 text-muted">Valentin Leroi</p>
+
+        <ul class="card mt-10 divide-y divide-line overflow-hidden text-left">
+          <li class="flex items-center justify-between gap-6 px-6 py-5">
+            <span class="text-sm text-muted">LinkedIn</span>
+            <span class="obf text-sm" data-kind="url"
+              data-v="aW9yZW|wtbml0|bmVsYX|Yvbmkv|bW9jLm|5pZGVr|bmlsLn|d3dy8v|OnNwdH|Ro"
+              data-label="aW9yZW|wtbml0|bmVsYX|Yvbmkv|bW9jLm|5pZGVr|bmls">…</span>
+          </li>
+          <li class="flex items-center justify-between gap-6 px-6 py-5">
+            <span class="text-sm text-muted">E-mail</span>
+            <span class="obf text-sm" data-kind="email"
+              data-v="bW9jLm|xpYW1n|QG5pdG|5lbGF2|aW9yZW|w=">…</span>
+          </li>
+          <li class="flex items-center justify-between gap-6 px-6 py-5">
+            <span class="text-sm text-muted">Téléphone</span>
+            <span class="obf text-sm tabular-nums" data-kind="tel"
+              data-v="NzY1ND|kxMTg3|MzMr"
+              data-label="NzYgNT|QgOTEg|MTggNz|A=">…</span>
+          </li>
+        </ul>
+        <noscript><p class="mt-6 text-sm text-muted">L'affichage des coordonnées nécessite JavaScript.</p></noscript>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    /* ---------- Routage ---------- */
+    const pages = document.querySelectorAll('[data-page]');
+    const routeLinks = document.querySelectorAll('[data-route]');
+
+    const BASE_TITLE = 'Valentin Leroi';
+
+    function navigate(id, { focus = true } = {}) {
+      if (!document.getElementById(id)) id = 'remerciements';
+      pages.forEach(p => p.classList.toggle('hidden', p.id !== id));
+      routeLinks.forEach(l => {
+        if (l.dataset.route === id && l.closest('.topbar') && !l.classList.contains('brand')) l.setAttribute('aria-current', 'page');
+        else l.removeAttribute('aria-current');
+      });
+      const heading = document.querySelector('#' + id + ' [data-page-title]');
+      document.title = heading ? heading.textContent.trim().slice(0, 60) + ' — ' + BASE_TITLE : BASE_TITLE;
+      window.scrollTo(0, 0);
+      if (focus && heading) heading.focus({ preventScroll: true });
+    }
+
+    routeLinks.forEach(link => link.addEventListener('click', e => {
+      e.preventDefault();
+      const id = link.dataset.route;
+      if (location.hash.slice(1) !== id) history.pushState(null, '', '#' + id);
+      navigate(id);
+    }));
+
+    // Boutons précédent / suivant du navigateur
+    window.addEventListener('popstate', () => navigate(location.hash.slice(1) || 'remerciements'));
+
+    /* ---------- Filtres des bons plans ---------- */
+    const filterButtons = document.querySelectorAll('.btn-filter');
+    const offers = document.querySelectorAll('#offres [data-category]');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const FADE_MS = 200;
+    let filterTimer;
+
+    function filterOffers(category, { animate = true } = {}) {
+      clearTimeout(filterTimer);
+      const matches = card => category === 'tous' || card.dataset.category === category;
+      const visible = [...offers].filter(matches).length;
+
+      filterButtons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.filter === category)));
+      document.getElementById('offres-compteur').textContent = visible + (visible > 1 ? ' offres' : ' offre');
+      document.getElementById('offres-vide').classList.toggle('hidden', visible > 0);
+
+      if (!animate || reduceMotion.matches) {
+        offers.forEach(card => card.classList.toggle('hidden', !matches(card)));
+        return;
+      }
+
+      // Phase 1 : estomper uniquement les cartes qui sortent
+      offers.forEach(card => { if (!matches(card) && !card.classList.contains('hidden')) card.classList.add('is-leaving'); });
+
+      // Phase 2 : retirer les sortantes de la grille, faire entrer les nouvelles
+      filterTimer = setTimeout(() => {
+        offers.forEach(card => {
+          const wasHidden = card.classList.contains('hidden');
+          if (matches(card)) {
+            card.classList.remove('hidden');
+            if (wasHidden) {
+              // Animer uniquement les cartes qui entrent
+              card.classList.add('is-leaving');
+              requestAnimationFrame(() => requestAnimationFrame(() => card.classList.remove('is-leaving')));
+            }
+          } else {
+            card.classList.add('hidden');
+            card.classList.remove('is-leaving');
+          }
+        });
+      }, FADE_MS);
+    }
+
+    filterButtons.forEach(b => b.addEventListener('click', () => filterOffers(b.dataset.filter)));
+
+    /* ---------- Obfuscation des coordonnées ----------
+       Encodage : chaîne inversée -> Base64 -> fragments de 6 caractères séparés par "|".
+       Nouvelle valeur : exécuter encodeContact('valeur') dans la console. */
+    function encodeContact(value) {
+      return btoa(value.split('').reverse().join('')).match(/.{1,6}/g).join('|');
+    }
+    function decodeContact(encoded) {
+      return atob(encoded.split('|').join('')).split('').reverse().join('');
+    }
+    function revealContacts() {
+      const prefix = { email: 'mailto:', tel: 'tel:', url: '' };
+      document.querySelectorAll('.obf').forEach(el => {
+        const value = decodeContact(el.dataset.v);
+        const a = document.createElement('a');
+        a.href = prefix[el.dataset.kind] + value;
+        a.textContent = el.dataset.label ? decodeContact(el.dataset.label) : value;
+        a.className = 'link ' + el.className.replace('obf', '').trim();
+        if (el.dataset.kind === 'url') { a.target = '_blank'; a.rel = 'noopener'; }
+        el.replaceWith(a);
+      });
+    }
+
+    /* ---------- Initialisation ---------- */
+    document.addEventListener('DOMContentLoaded', () => {
+      revealContacts();
+      filterOffers('tous', { animate: false });
+      navigate(location.hash.slice(1) || 'remerciements', { focus: false });
+    });
+  </script>
+</body>
+</html>
